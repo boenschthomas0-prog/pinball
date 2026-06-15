@@ -19,8 +19,6 @@ import threading
 import time
 from pathlib import Path
 
-from evdev import InputDevice, ecodes, list_devices
-
 # Menü zwingt sich auf X11 (auch unter Wayland) - sonst Fullscreen-Probleme
 os.environ['GDK_BACKEND'] = 'x11'
 
@@ -49,15 +47,6 @@ THEME_EXTS  = ('.mp3', '.ogg', '.opus', '.m4a', '.flac', '.wav')
 THEME_VOLUME = 0.55                     # 0.0 – 1.0
 THEME_DELAY  = 550                      # ms Wartezeit, bis das Theme startet
 
-# Controller
-CTRL_AXIS_DEADZONE = 16384              # Schwellwert für Stick-Achsen (±32767)
-CTRL_REPEAT_DELAY  = 0.30               # Sekunden zwischen Wiederholungen bei Dauer-Druck
-CTRL_AXIS_SOURCE   = '/dev/input/by-id/*-event-joystick'  # Glob für Controller-Suche
-CTRL_BTN_A         = 304                # A
-CTRL_BTN_B         = 305                # B
-CTRL_BTN_START     = 315                # Start
-CTRL_BTN_SELECT    = 314                # Select / Back
-
 SCREEN_W, SCREEN_H = 1920, 1080
 
 # ---- Layout-Regionen (px) -------------------------------------------------
@@ -67,7 +56,7 @@ WHEEL  = (0, 34, 1920, 798)             # x, y, w, h  – horizontales Rad
 DMD    = (260, 858, 1400, 150)
 HINT       = (60, 1014, 1800, 56)       # x, y, w, h  – Dot-Matrix-Hinweiszeile
 HINT_PITCH = 4                          # Punktabstand der Hinweiszeile, px
-HINT_TEXT  = '◀ ▶  WÄHLEN      A/ENTER  STARTEN      B/SELECT  MUSIK      9  ENDE'
+HINT_TEXT  = '◀ ▶  WÄHLEN      ENTER  STARTEN      M  MUSIK      9  ENDE'
 
 # ---- Fisheye-Coverflow ----------------------------------------------------
 # Screenshot-Karten auf einer horizontal gewölbten Linse: zentral groß &
@@ -324,23 +313,6 @@ def render_hint(text):
                        (0.62, 0.37, 0.12), None)
 
 
-def find_controller():
-    """Ersten angeschlossenen Gamecontroller via evdev finden.
-    Gibt ein InputDevice zurück oder None."""
-    for p in sorted(Path('/dev/input/by-id').glob('*-event-joystick')):
-        try:
-            dev = InputDevice(str(p))
-            return dev
-        except Exception:
-            continue
-    # Fallback: js0 (klassisches Joystick-Device)
-    try:
-        dev = InputDevice('/dev/input/js0')
-        return dev
-    except Exception:
-        return None
-
-
 class ArcadeMenu(Gtk.Window):
     def __init__(self):
         super().__init__(title='Thomas Arcade')
@@ -391,67 +363,6 @@ class ArcadeMenu(Gtk.Window):
         self.connect('realize', lambda *_: (self.fullscreen(), self.present()))
 
         self._update_selection()
-        self._start_joystick()
-
-    # ---- Joystick / Gamecontroller ----------------------------------------
-    def _sim_key(self, kn):
-        """Tastendruck aus dem Joystick-Thread via GLib-Hauptschleife auslösen."""
-        GLib.idle_add(self.on_key, None,
-                      type('ev', (), {'keyval': Gdk.keyval_from_name(kn)})())
-
-    def _start_joystick(self):
-        """Startet einen Daemon-Thread, der den Gamecontroller liest und auf
-        Menü-Navigation abbildet."""
-        dev = find_controller()
-        if not dev:
-            return
-        ctrl_name = dev.name
-        log = Path(LOG_FILE)
-        try:
-            log.write_text(f'{time.strftime("%F %T")} - Controller: {ctrl_name}\n')
-        except Exception:
-            pass
-
-        last_dir = 0          # -1 links, 0 mitte, 1 rechts — Entprellung
-        last_dir_t = 0.0      # letzte Richtungs-Aktion
-        throttle = 0.0
-
-        def _poll():
-            nonlocal last_dir, last_dir_t, throttle
-            try:
-                for event in dev.read_loop():
-                    now = event.timestamp()
-                    if event.type == ecodes.EV_KEY and event.value == 1:
-                        if event.code == CTRL_BTN_A:
-                            self._sim_key('Return')
-                        elif event.code == CTRL_BTN_B:
-                            self._sim_key('Escape')
-                        elif event.code == CTRL_BTN_START:
-                            self._sim_key('Return')
-                        elif event.code == CTRL_BTN_SELECT:
-                            self._sim_key('m')
-                    elif event.type == ecodes.EV_ABS:
-                        if event.code in (ecodes.ABS_HAT0X, ecodes.ABS_X):
-                            val = event.value
-                            if abs(val) < CTRL_AXIS_DEADZONE:
-                                val = 0
-                            dir = 0
-                            if val < -CTRL_AXIS_DEADZONE:
-                                dir = -1
-                            elif val > CTRL_AXIS_DEADZONE:
-                                dir = 1
-                            if dir != 0:
-                                if dir != last_dir or (now - last_dir_t) > CTRL_REPEAT_DELAY:
-                                    self._sim_key('Left' if dir < 0 else 'Right')
-                                    last_dir = dir
-                                    last_dir_t = now
-                            else:
-                                last_dir = 0
-            except OSError:
-                pass  # Controller wurde abgesteckt
-
-        t = threading.Thread(target=_poll, daemon=True)
-        t.start()
 
     # ---- Daten / Auswahl --------------------------------------------------
     def _current(self):
