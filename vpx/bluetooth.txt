@@ -1,0 +1,38 @@
+Nintendo Pro Controller koppeln (Ubuntu Terminal)
+
+1. Terminal öffnen
+
+2. Bluetooth starten:
+
+bluetoothctl
+
+3. Befehle eingeben:
+
+power on
+agent on
+default-agent
+scan on
+
+4. Am Controller:
+   Sync-Knopf oben einige Sekunden drücken,
+   bis die LEDs laufen.
+
+5. Neue Adresse merken und koppeln:
+
+pair XX:XX:XX:XX:XX:XX
+
+6. Vertrauen und verbinden:
+
+trust XX:XX:XX:XX:XX:XX
+connect XX:XX:XX:XX:XX:XX
+
+7. Prüfen:
+
+info XX:XX:XX:XX:XX:XX
+
+Wichtig:
+Connected: yes
+
+8. Bluetooth verlassen:
+
+exit

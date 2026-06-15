@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Thomas Arcade
+Comment=Pinball-Menü starten
+Exec=/home/thomas/Applications/pinball/vpx/vpinball-menu.py
+Icon=/home/thomas/Applications/pinball/vpx/icon.svg
+Path=/home/thomas/Applications/pinball/vpx
+Terminal=false
+Categories=Game;ArcadeGame;
+StartupNotify=true

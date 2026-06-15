@@ -1,0 +1,49 @@
+# Secrets
+.env
+
+# Claude / Agenten
+.claude/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build-Artifakte & Runtime
+runtime/
+backups/
+blender-projects/*.blend1
+blender-projects/*.blend
+
+# Blender (1.2 GB — zu groß für Git, nur Skripte versionieren)
+blender/
+!blender/*.py
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# Logs
+*.log
+
+# VPX — Binaries, Tables & Downloads (zu groß für Git)
+vpx/VPinballX_GL
+vpx/lib*.so*
+vpx/downloads-archive/
+vpx/plugins/
+vpx/tables/
+vpx/tables-broken/
+vpx/media/
+vpx/assets/
+vpx/pinmame/
+vpx/__pycache__/
+vpx/.claude/

@@ -1,0 +1,42 @@
+cd ~/Applications/pinball/vpx
+./VPinballX_GL -Play "tables/alien13.vpx"
+
+pkill -9 -f VPinballX_GL
+rm -rf ~/.vpinball/Cache/alien13
+
+kompletten Reset der VPX-Benutzereinstellungen:
+pkill -f VPinballX_GL
+mv ~/.vpinball ~/.vpinball.backup
+mkdir -p ~/.vpinball/pinmame/roms
+cp ~/.vpinball.backup/pinmame/roms/*.zip ~/.vpinball/pinmame/roms/ 2>/dev/null
+cd ~/Applications/pinball/vpx
+./VPinballX_GL -Play "tables/alien13.vpx"
+
+Bram Stokers Dracula (Williams 1993) VPW 1.0.1.vpx
+alien13,vpx
+
+usb check
+ls /dev/input/js*
+
+ini finden
+find ~ -name "VPinballX.ini"
+/home/thomas/.vpinball/VPinballX.ini
+/home/thomas/.vpinball.STABLE/VPinballX.ini
+/home/thomas/.vpinball.STABLE~/VPinballX.ini
+/home/thomas/.vpinball.backup2/VPinballX.ini
+/home/thomas/.vpinball.bad/VPinballX.ini
+/home/thomas/.vpinball.backup/.vpinball/VPinballX.ini
+/home/thomas/.vpinball.backup/VPinballX.ini
+/home/thomas/.vpinball.bad2/.vpinball/VPinballX.ini
+/home/thomas/.vpinball.bad2/VPinballX.ini
+
+
+bvon backup wieerherstellen
+pkill -9 -f VPinballX_GL
+mv ~/.vpinball ~/.vpinball.currentbroken
+cp -r ~/.vpinball.STABLE ~/.vpinball
+
+dann testen
+cd ~/Applications/pinball/vpx
+./VPinballX_GL -Play "tables/alien13.vpx"
+

@@ -1,0 +1,18 @@
+MENÜ-MUSIK — LIZENZ & CREDITS
+=============================
+
+Standard-Menü-Theme  (_menu-1.ogg … _menu-5.ogg):
+
+  "Retro Synthwave Loops" von Tomasz Kucza
+  Lizenz: CC-BY 4.0   https://creativecommons.org/licenses/by/4.0/
+  Quelle: https://opengameart.org/content/retro-synthwave-loops
+
+  _menu-1.ogg  <-  deadly_contracts-loop1
+  _menu-2.ogg  <-  going_undercover-loop1
+  _menu-3.ogg  <-  hostile_territory-loop1
+  _menu-4.ogg  <-  shadow_operations-loop1
+  _menu-5.ogg  <-  the_price_of_freedom-loop1
+
+Das Menü wählt bei jedem Start zufällig einen dieser Loops als
+Attract-Theme. Es spielt für alle Tische, die keine eigene Theme-Datei
+haben (siehe README.txt).
